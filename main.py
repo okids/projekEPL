@@ -16,31 +16,35 @@
 #  GNU General Public License for more details.
 
 from bs4 import BeautifulSoup
+from appconfig import AppConfig
 import requests
 
-DATA_OUTPUT = "data/output.dat"
+FILEPATH = "app.config"
 
 class WebScrapper:
-	def __init__(self, DATA_OUTPUT):
+	def __init__(self, URL, DATA_OUTPUT):
 		self.data = DATA_OUTPUT
+		self.url = URL
 		return
-	def scrap(self, url):
-		url = url
-		scrub = requests.get(url)
+	def scrap(self):
+		scrub = requests.get(self.url)
 		data = scrub.text		
 		soup = BeautifulSoup(data, 'html.parser')
 		table = soup.table
 		return str(table)
-	def write_output(self, string_data):
+	def write_output(self, stringData):
 		data = open(self.data, "w")
-		data.write(string_data)
+		data.write(stringData)
 		data.close
 		print("done scrapping")
 		return
-	def main(self, url):
-		string_data = self.scrap(url)
-		self.write_output(string_data)
+	def main(self):
+		stringData = self.scrap()
+		self.write_output(stringData)
 		return
 
-app = WebScrapper(DATA_OUTPUT)
-app.main("http://statspack.squawka.com/league-form-table")
+appconfig = AppConfig(FILEPATH)
+config = appconfig.readfile()
+if(config[0]!=""):
+	app = WebScrapper(config[0], config[1])
+	app.main()
