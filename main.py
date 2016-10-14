@@ -18,18 +18,29 @@
 from bs4 import BeautifulSoup
 import requests
 
-def main(url):
-	url = url
-	scrub = requests.get(url)
-	data = scrub.text		
-	soup = BeautifulSoup(data, 'html.parser')
-	table = soup.table
-	
-	data = open("data/output.dat", "w")
-	data.write(str(table))
-	data.close
-	
-	print("-- done scrapping --")
-	return
+DATA_OUTPUT = "data/output.dat"
 
-main("http://statspack.squawka.com/league-form-table")
+class WebScrapper:
+	def __init__(self, DATA_OUTPUT):
+		self.data = DATA_OUTPUT
+		return
+	def scrap(self, url):
+		url = url
+		scrub = requests.get(url)
+		data = scrub.text		
+		soup = BeautifulSoup(data, 'html.parser')
+		table = soup.table
+		return str(table)
+	def write_output(self, string_data):
+		data = open(self.data, "w")
+		data.write(string_data)
+		data.close
+		print("done scrapping")
+		return
+	def main(self, url):
+		string_data = self.scrap(url)
+		self.write_output(string_data)
+		return
+
+app = WebScrapper(DATA_OUTPUT)
+app.main("http://statspack.squawka.com/league-form-table")
