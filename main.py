@@ -24,7 +24,12 @@ def main(url):
 	data = scrub.text		
 	soup = BeautifulSoup(data, 'html.parser')
 	table = soup.table
-	print(table.prettify())
+	
+	data = open("data/output.dat", "w")
+	data.write(str(table))
+	data.close
+	
+	print("-- done scrapping --")
 	return
 
 main("http://statspack.squawka.com/league-form-table")
