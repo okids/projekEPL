@@ -26,8 +26,11 @@ for param in params:
 				"Accept" : "*/*",
 				"Referer" : "https://www.premierleague.com/stats/top/clubs/wins",
 				"Connection" : "keep-alive"}
-	data = requests.get("https://footballapi.pulselive.com/football/stats/ranked/teams/"+param+"?page=0&pageSize=20&compSeasons=54&comps=1&altIds=true",
-						headers = theheaders)
+	seasons = '54';
+	theparams = { 'page' : '0', 'pageSize' : '20', 'compSeasons' : seasons, 'comps' : '1', 'altIds' : 'true'}
+	data = requests.get("https://footballapi.pulselive.com/football/stats/ranked/teams/"+param+"",
+						headers = theheaders,
+						params = theparams)
 	print('scrapping '+param+' section')
 	datajson = data.text
 	datajson = json.loads(datajson)
