@@ -15,8 +15,9 @@ params = ['wins', 'losses', 'touches', 'own_goals', 'total_yel_card',
 
 totalparam = len(params)
 pointer = 0
-datacluball = [[]]
-dataclub = [[]]
+datacluball = []
+dataclub = []
+#~ datadict = dict()
 for param in params:
 	theheaders = {"Origin" : "https://www.premierleague.com", 
 				"Accept-Encoding" : "gzip, deflate, sdch, br",
@@ -35,18 +36,32 @@ for param in params:
 	datajson = data.text
 	datajson = json.loads(datajson)
 	datajson = datajson['stats']['content']
-	print(datajson)
+	#~ print(datajson)
 	clubsname = []
 	values = []
 	valstype = []
 	i=0
+	section_pointer = 0
+	totalclub = 0
+	dataclub.append(param)
 	for club in datajson:
-		if(pointer==0):
+		clubname = str(club['owner']['name'])
+		if(clubname == 'AFC Bournemouth'):
+				clubname = 'Bournemouth'
+		if(section_pointer==0):
 			clubsname.append(str(club['owner']['name']))
-		values.append(club['value'])
-		valstype.append(str(club['name']))
-		dataclub.append((str(club['name']),[[str(club['owner']['name']), club['value']]]))
-	pointer+=1
-with open('data/responsejson.txt', 'w') as outfile:
+			#~ datadict[param] = {str(club['owner']['name']) : club['value']}
+			dataclub[pointer] = {clubname : club['value']}
+		else:
+			dataclub[pointer][clubname] = club['value']
+		#values.append(club['value'])
+		#valstype.append(str(club['name']))
+		#dataclub[param]=([str(club['owner']['name']), club['value']])
+		totalclub += 1
+		section_pointer += 1
+		print(str(club['owner']['name'])) 
+	dataclub[pointer] = sorted(dataclub[pointer].items())
+	pointer += 1
+with open('data/responsejson.json', 'w') as outfile:
     outfile.write(str(dataclub))
-print dataclub
+#~ print dataclub
