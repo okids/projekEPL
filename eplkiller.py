@@ -12,14 +12,10 @@ params = ['wins', 'losses', 'touches', 'own_goals', 'total_yel_card',
 'total_red_card', 'goals', 'total_pass', 'total_scoring_att', 'total_offside',
 'hit_woodwork','big_chance_missed', 'total_tackle', 'total_clearance', 'clearance_off_line',
 'dispossessed', 'clean_sheet', 'saves', 'penalty_save', 'total_high_claim', 'punches']
-years = ['9', '10', '11', '12', '13','14','15','16','17','18'
-'19','20','21','22','27','42','54']
-
+years = ['19','20','21','22','27','42','54']
 totalparam = len(params)
 pointer = 0
-datacluball = []
-dataclub = []
-#~ datadict = dict()
+dataclub = dict()
 for year in years:
 	for param in params:
 		theheaders = {"Origin" : "https://www.premierleague.com", 
@@ -30,36 +26,32 @@ for year in years:
 					"Accept" : "*/*",
 					"Referer" : "https://www.premierleague.com/stats/top/clubs/wins",
 					"Connection" : "keep-alive"}
-		seasons = '54';
+		seasons = year;
 		theparams = { 'page' : '0', 'pageSize' : '20', 'compSeasons' : seasons, 'comps' : '1', 'altIds' : 'true'}
 		data = requests.get("https://footballapi.pulselive.com/football/stats/ranked/teams/"+param+"",
 							headers = theheaders,
 							params = theparams)
-		print('scrapping '+param+' section')
+		print('scrapping '+param+' section \n')
 		datajson = data.text
 		datajson = json.loads(datajson)
 		datajson = datajson['stats']['content']
-		#~ print(datajson)
-		values = []
-		valstype = []
 		i=0
 		section_pointer = 0
 		totalclub = 0
-		dataclub.append(param)
 		for club in datajson:
 			clubname = str(club['owner']['name'])
 			if(clubname == 'AFC Bournemouth'):
 					clubname = 'Bournemouth'
-			if(section_pointer==0):
-				dataclub[pointer] = {clubname : club['value']}
+			if(pointer==0):
+				dataclub = {clubname : [club['value']]}
 			else:
-				dataclub[pointer][clubname] = club['value']
+				try:
+					dataclub[clubname].append(club['value'])
+				except:
+					dataclub[clubname] = [club['value']]
 			totalclub += 1
 			section_pointer += 1
 			print(str(club['owner']['name'])) 
-		dataclub[pointer] = sorted(dataclub[pointer].items())
 		pointer += 1
-
-with open('data/responsejson.json', 'w') as outfile:
-    outfile.write(str(dataclub))
-#~ print dataclub
+	with open('data/response'+year+'.txt', 'w') as outfile:
+		outfile.write(str(dataclub))
