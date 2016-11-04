@@ -18,7 +18,7 @@ class KillEPL:
 				'total_red_card', 'total_pass', 'total_scoring_att', 'total_offside',
 				'hit_woodwork','big_chance_missed', 'total_tackle', 'total_clearance', 'clearance_off_line',
 				'dispossessed', 'clean_sheet', 'saves', 'penalty_save', 'total_high_claim', 'punches']
-		self.years = ['42','54']
+		self.years = ['19','20','21','22', '27', '42','54']
 		self.totalparam = len(self.params)
 		self.pointer = 0
 		return
@@ -27,8 +27,9 @@ class KillEPL:
 			self.dataclub = dict()
 			for param in self.params:
 				self.scrap(year, param)
-			with open('data/stats'+year+'.txt', 'w') as outfile:
-				outfile.write(str(self.dataclub))
+				data_in_json = json.dumps(self.dataclub)
+			with open('data/stats'+year+'.json', 'w') as outfile:
+				outfile.write(str(data_in_json))
 		return
 	def scrap(self, year, param):
 		section_pointer = 0
@@ -54,12 +55,13 @@ class KillEPL:
 			if(clubname == 'AFC Bournemouth'):
 					clubname = 'Bournemouth'
 			if(self.pointer==0):
-				self.dataclub = {clubname : [club['value']]}
+				self.dataclub = {clubname : {str(club['name']) : club['value']}}
 			else:
 				try:
-					self.dataclub[clubname].append(club['value'])
-				except:
-					self.dataclub[clubname] = [club['value']]
+					self.dataclub[clubname][str(club['name'])] = club['value']
+				except Exception, e:
+					self.dataclub[clubname] = {str(club['name']) : club['value']}
+					print(str(e))
 			section_pointer += 1
 			print(str(club['owner']['name'])) 
 		self.pointer += 1
