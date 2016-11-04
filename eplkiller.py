@@ -1,23 +1,37 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# eplkiller.py
+# by fnugrahendi and okids
+# run : $ python eplkiller.py
+# this is example getting json with win type and season 2016-2017. 
+# We can change the compSeasons with 18,19,20,21,22,27,42,54, or empty CompSeasons
+# we can change another stats type in ../ranked/teams/%stats%
+
 import os
 import json
 import csv
 import requests
 
-#this is example getting json with win type and season 2016-2017. 
-#We can change the compSeasons with 18,19,20,21,22,27,42,54, or empty CompSeasons
-#we can change another stats type in ../ranked/teams/%stats%
-#we can change the future
-
-params = ['wins', 'losses', 'touches', 'own_goals', 'total_yel_card',
-'total_red_card', 'goals', 'total_pass', 'total_scoring_att', 'total_offside',
-'hit_woodwork','big_chance_missed', 'total_tackle', 'total_clearance', 'clearance_off_line',
-'dispossessed', 'clean_sheet', 'saves', 'penalty_save', 'total_high_claim', 'punches']
-years = ['19','20','21','22','27','42','54']
-totalparam = len(params)
-pointer = 0
-dataclub = dict()
-for year in years:
-	for param in params:
+class KillEPL:
+	def __init__(self):
+		self.params = ['goals', 'wins', 'losses', 'touches', 'own_goals', 'total_yel_card',
+				'total_red_card', 'total_pass', 'total_scoring_att', 'total_offside',
+				'hit_woodwork','big_chance_missed', 'total_tackle', 'total_clearance', 'clearance_off_line',
+				'dispossessed', 'clean_sheet', 'saves', 'penalty_save', 'total_high_claim', 'punches']
+		self.years = ['42','54']
+		self.totalparam = len(self.params)
+		self.pointer = 0
+		return
+	def main(self):
+		for year in self.years:
+			self.dataclub = dict()
+			for param in self.params:
+				self.scrap(year, param)
+			with open('data/stats'+year+'.txt', 'w') as outfile:
+				outfile.write(str(self.dataclub))
+		return
+	def scrap(self, year, param):
+		section_pointer = 0
 		theheaders = {"Origin" : "https://www.premierleague.com", 
 					"Accept-Encoding" : "gzip, deflate, sdch, br",
 					"Accept-Language" : "en-US,en;q=0.8",
@@ -31,27 +45,25 @@ for year in years:
 		data = requests.get("https://footballapi.pulselive.com/football/stats/ranked/teams/"+param+"",
 							headers = theheaders,
 							params = theparams)
-		print('scrapping '+param+' section \n')
+		print('\nscrapping '+param+' section '+year+'\n')
 		datajson = data.text
 		datajson = json.loads(datajson)
 		datajson = datajson['stats']['content']
-		i=0
-		section_pointer = 0
-		totalclub = 0
 		for club in datajson:
 			clubname = str(club['owner']['name'])
 			if(clubname == 'AFC Bournemouth'):
 					clubname = 'Bournemouth'
-			if(pointer==0):
-				dataclub = {clubname : [club['value']]}
+			if(self.pointer==0):
+				self.dataclub = {clubname : [club['value']]}
 			else:
 				try:
-					dataclub[clubname].append(club['value'])
+					self.dataclub[clubname].append(club['value'])
 				except:
-					dataclub[clubname] = [club['value']]
-			totalclub += 1
+					self.dataclub[clubname] = [club['value']]
 			section_pointer += 1
 			print(str(club['owner']['name'])) 
-		pointer += 1
-	with open('data/response'+year+'.txt', 'w') as outfile:
-		outfile.write(str(dataclub))
+		self.pointer += 1
+		return
+
+app = KillEPL()
+app.main()
