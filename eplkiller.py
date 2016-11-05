@@ -54,7 +54,9 @@ class KillEPL:
 		for club in datajson:
 			clubname = str(club['owner']['name'])
 			if(clubname == 'AFC Bournemouth'):
-					clubname = 'Bournemouth'
+				clubname = 'Bournemouth'
+			elif(clubname == 'Cardiff'):
+				clubname = 'Cardiff City'
 			if(self.pointer==0):
 				self.dataclub[clubname] = {str(club['name']) : club['value']}
 			else:
