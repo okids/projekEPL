@@ -25,6 +25,7 @@ class KillEPL:
 	def main(self):
 		for year in self.years:
 			self.dataclub = dict()
+			self.pointer = 0
 			for param in self.params:
 				self.scrap(year, param)
 				data_in_json = json.dumps(self.dataclub)
@@ -55,7 +56,7 @@ class KillEPL:
 			if(clubname == 'AFC Bournemouth'):
 					clubname = 'Bournemouth'
 			if(self.pointer==0):
-				self.dataclub = {clubname : {str(club['name']) : club['value']}}
+				self.dataclub[clubname] = {str(club['name']) : club['value']}
 			else:
 				try:
 					self.dataclub[clubname][str(club['name'])] = club['value']
