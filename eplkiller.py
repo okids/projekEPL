@@ -4,6 +4,7 @@
 # by fnugrahendi and okids
 # run : $ python eplkiller.py
 # this is example getting json with win type and season 2016-2017. 
+# it write output as json-separated-files each season
 # We can change the compSeasons with 18,19,20,21,22,27,42,54, or empty CompSeasons
 # we can change another stats type in ../ranked/teams/%stats%
 
@@ -12,7 +13,7 @@ import json
 import csv
 import requests
 
-class KillEPL:
+class KillEPL():
 	def __init__(self):
 		self.params = ['goals', 'wins', 'losses', 'touches', 'own_goals', 'total_yel_card',
 				'total_red_card', 'total_pass', 'total_scoring_att', 'total_offside',
@@ -29,7 +30,7 @@ class KillEPL:
 			for param in self.params:
 				self.scrap(year, param)
 				data_in_json = json.dumps(self.dataclub)
-			with open('data/stats'+year+'.json', 'w') as outfile:
+			with open('data/json/stats'+year+'.json', 'w') as outfile:
 				outfile.write(str(data_in_json))
 		return
 	def scrap(self, year, param):
@@ -70,5 +71,6 @@ class KillEPL:
 		self.pointer += 1
 		return
 
-app = KillEPL()
-app.main()
+if __name__ == '__main__':
+	app = KillEPL()
+	app.main()
